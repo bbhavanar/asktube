@@ -1,0 +1,25 @@
+{
+  "title": "RAG Playlist",
+  "videos": [
+    {
+      "id": "X0btK9X0Xnk",
+      "title": "Retrieval Augmented Generation | What is RAG | How does RAG Work | RAG Explained | CampusX"
+    },
+    {
+      "id": "bL92ALSZ2Cg",
+      "title": "Document Loaders in LangChain |  Generative AI using LangChain | Video 10 | CampusX"
+    },
+    {
+      "id": "SEWS9P4ODmc",
+      "title": "Text Splitters in LangChain | Generative AI using LangChain | Video 11 | CampusX"
+    },
+    {
+      "id": "k13WK0bxQP0",
+      "title": "Vector Stores in LangChain | Generative AI using LangChain | Video 12 | CampusX"
+    },
+    {
+      "id": "pJdMxwXBsk0",
+      "title": "Retrievers in LangChain | Generative AI using LangChain | Video 13 | CampusX"
+    }
+  ]
+}
