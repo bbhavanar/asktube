@@ -15,6 +15,7 @@ client = genai.Client()
 CHUNK_SECONDS = 60
 EMBED_MODEL = "gemini-embedding-001"
 CHAT_MODEL = "gemini-3.5-flash"
+FALLBACK_MODEL = "gemini-3-flash-preview"
 TOP_K = 5
 MIN_SIMILARITY = 0.6
 
@@ -164,7 +165,7 @@ def retrieve(question, video_ids):
     return found
 
 
-def build_prompt(question, chunks):
+def build_prompt(question, chunks, language="English"):
     sources = ""
     for number, chunk in enumerate(chunks, start=1):
         sources += f"[{number}] (Video: {chunk['title']}, at {format_time(chunk['start'])}) {chunk['text']}\n\n"
@@ -173,6 +174,7 @@ def build_prompt(question, chunks):
 You are AskTube, a friendly tutor that answers questions about YouTube lectures.
 Use ONLY the transcript excerpts below. Each excerpt has a number, a video title and a timestamp.
 The transcripts are auto-generated, so they may contain spelling mistakes. Fix them in your answer.
+Write the answer in {language}.
 If the excerpts don't contain the answer, set "answer" to
 "These videos don't cover that." and "sources" to [].
 
@@ -186,16 +188,26 @@ Question: {question}
 """
 
 
-def answer_question(question, video_ids):
+def generate_json(prompt):
+    for model in [CHAT_MODEL, FALLBACK_MODEL]:
+        for attempt in range(3):
+            try:
+                return client.models.generate_content(
+                    model=model,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(response_mime_type="application/json")
+                )
+            except errors.ServerError:
+                time.sleep(2 * (attempt + 1))
+    raise RuntimeError("Gemini is busy right now. Please try again in a minute.")
+
+
+def answer_question(question, video_ids, language="English"):
     chunks = retrieve(question, video_ids)
     if not chunks:
         return {"answer": "These videos don't seem to cover that topic.", "sources": []}
 
-    response = client.models.generate_content(
-        model=CHAT_MODEL,
-        contents=build_prompt(question, chunks),
-        config=types.GenerateContentConfig(response_mime_type="application/json")
-    )
+    response = generate_json(build_prompt(question, chunks, language))
     result = json.loads(response.text)
 
     sources = []
