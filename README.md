@@ -4,6 +4,8 @@
 
 YouTube's built-in AI answers questions about **one video at a time**. AskTube searches an **entire course**: ask once, and it tells you *which video* and *which second* covers your answer.
 
+🔗 **Try it live:** https://asktubee.streamlit.app/
+
 ![AskTube welcome screen](screenshots/welcome.png)
 
 ![An answer with clickable timestamps](screenshots/answer.png)
